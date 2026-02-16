@@ -1,11 +1,11 @@
 [gd_scene load_steps=20 format=3 uid="uid://cgy5ho8lmm8o8"]
 
-[ext_resource type="Script" uid="uid://dwowudj5aiw1y" path="res://scripts/animated_garden.gd" id="1_d2g6v"]
-[ext_resource type="Texture2D" uid="uid://jp3qj5tisj6l" path="res://assets/waterdrop32.png" id="3_lydu6"]
-[ext_resource type="FontFile" uid="uid://cvr8qmjtihjbl" path="res://assets/at01.ttf" id="4_ifx3t"]
-[ext_resource type="Script" uid="uid://b5xckjntbm5aa" path="res://scripts/path_follow_2d.gd" id="6_lydu6"]
-[ext_resource type="Texture2D" uid="uid://47j4oxw0slnh" path="res://assets/pot plant.png" id="8_xj2sg"]
-[ext_resource type="Script" uid="uid://da1pcnit3kf36" path="res://scripts/pplant.gd" id="9_yk0yp"]
+[ext_resource type="Script" uid="uid://dwowudj5aiw1y" path="res://scripts/plant_graph.gd" id="1_3re4m"]
+[ext_resource type="FontFile" uid="uid://cvr8qmjtihjbl" path="res://assets/at01.ttf" id="2_owjaw"]
+[ext_resource type="Texture2D" uid="uid://jp3qj5tisj6l" path="res://assets/waterdrop32.png" id="3_5whcu"]
+[ext_resource type="Script" uid="uid://b5xckjntbm5aa" path="res://scripts/path_follow_2d.gd" id="4_txbvq"]
+[ext_resource type="Texture2D" uid="uid://47j4oxw0slnh" path="res://assets/pot plant.png" id="5_x34eu"]
+[ext_resource type="Script" uid="uid://da1pcnit3kf36" path="res://scripts/pplant.gd" id="6_kq26m"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ic3er"]
 bg_color = Color(0.6330667, 0.5918945, 0.5614057, 1)
@@ -18,7 +18,7 @@ bg_color = Color(0.39751354, 0.63176006, 0.7774804, 1)
 
 [sub_resource type="Curve2D" id="Curve2D_yk0yp"]
 _data = {
-"points": PackedVector2Array(0, 0, 0, 0, -154, 8, 0, 0, 0, 0, -121, 13, 0, 0, 0, 0, -86, -31)
+"points": PackedVector2Array(0, 0, 0, 0, -149, 8, 0, 0, 0, 0, -114, 14, 0, 0, 0, 0, -79, -31)
 }
 point_count = 3
 
@@ -37,31 +37,31 @@ script/source = "extends Path2D
 "
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_n0hj6"]
-atlas = ExtResource("8_xj2sg")
+atlas = ExtResource("5_x34eu")
 region = Rect2(0, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_jie03"]
-atlas = ExtResource("8_xj2sg")
+atlas = ExtResource("5_x34eu")
 region = Rect2(0, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_riyay"]
-atlas = ExtResource("8_xj2sg")
+atlas = ExtResource("5_x34eu")
 region = Rect2(0, 32, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_poaew"]
-atlas = ExtResource("8_xj2sg")
+atlas = ExtResource("5_x34eu")
 region = Rect2(0, 64, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_k8g28"]
-atlas = ExtResource("8_xj2sg")
+atlas = ExtResource("5_x34eu")
 region = Rect2(0, 64, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7ml67"]
-atlas = ExtResource("8_xj2sg")
+atlas = ExtResource("5_x34eu")
 region = Rect2(0, 32, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_0aa0m"]
-atlas = ExtResource("8_xj2sg")
+atlas = ExtResource("5_x34eu")
 region = Rect2(0, 0, 32, 32)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_vocu1"]
@@ -103,12 +103,12 @@ animations = [{
 "speed": 1.0
 }]
 
-[node name="AnimatedGarden" type="Node2D"]
-script = ExtResource("1_d2g6v")
+[node name="plantGraph" type="Node2D"]
+script = ExtResource("1_3re4m")
 
 [node name="dataplot" type="Label" parent="."]
-offset_left = -177.0
-offset_top = -92.0
+offset_left = -160.0
+offset_top = -90.0
 offset_right = 54.0
 offset_bottom = 90.0
 theme_override_styles/normal = SubResource("StyleBoxFlat_ic3er")
@@ -119,7 +119,7 @@ offset_left = 7.0
 offset_top = 160.0
 offset_right = 36.0
 offset_bottom = 173.0
-theme_override_fonts/font = ExtResource("4_ifx3t")
+theme_override_fonts/font = ExtResource("2_owjaw")
 theme_override_font_sizes/font_size = 16
 text = "day1"
 vertical_alignment = 1
@@ -131,7 +131,7 @@ offset_left = 42.0
 offset_top = 160.0
 offset_right = 71.0
 offset_bottom = 173.0
-theme_override_fonts/font = ExtResource("4_ifx3t")
+theme_override_fonts/font = ExtResource("2_owjaw")
 theme_override_font_sizes/font_size = 16
 text = "day2"
 vertical_alignment = 1
@@ -144,7 +144,7 @@ offset_top = 106.0
 offset_right = 217.0
 offset_bottom = 120.0
 theme_override_colors/font_color = Color(1, 1, 1, 0.28627452)
-theme_override_fonts/font = ExtResource("4_ifx3t")
+theme_override_fonts/font = ExtResource("2_owjaw")
 text = "----------------------------------"
 
 [node name="meter2" type="Label" parent="dataplot"]
@@ -154,12 +154,12 @@ offset_top = 48.0
 offset_right = 218.0
 offset_bottom = 62.0
 theme_override_colors/font_color = Color(1, 1, 1, 0.28627452)
-theme_override_fonts/font = ExtResource("4_ifx3t")
+theme_override_fonts/font = ExtResource("2_owjaw")
 text = "----------------------------------"
 
 [node name="waterdrop" type="Sprite2D" parent="dataplot"]
 position = Vector2(-4, 341)
-texture = ExtResource("3_lydu6")
+texture = ExtResource("3_5whcu")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -170,12 +170,22 @@ anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
 offset_left = -377.0
-offset_top = -308.0
-offset_right = -12.0
-offset_bottom = 310.0
+offset_top = -270.0
+offset_right = -2.0
+offset_bottom = 270.0
 grow_horizontal = 0
 grow_vertical = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_lydu6")
+
+[node name="backToPage" type="Button" parent="CanvasLayer/logbook"]
+layout_mode = 0
+offset_left = 90.0
+offset_top = 478.0
+offset_right = 171.0
+offset_bottom = 512.0
+theme_override_fonts/font = ExtResource("2_owjaw")
+theme_override_font_sizes/font_size = 32
+text = "Back"
 
 [node name="TakePhoto" type="Button" parent="CanvasLayer/logbook"]
 layout_mode = 0
@@ -183,7 +193,7 @@ offset_left = 230.0
 offset_top = 471.0
 offset_right = 345.0
 offset_bottom = 518.0
-theme_override_fonts/font = ExtResource("4_ifx3t")
+theme_override_fonts/font = ExtResource("2_owjaw")
 theme_override_font_sizes/font_size = 32
 text = "take photo!"
 
@@ -195,7 +205,7 @@ offset_left = 489.0
 offset_top = 547.0
 offset_right = 594.0
 offset_bottom = 596.0
-theme_override_fonts/font = ExtResource("4_ifx3t")
+theme_override_fonts/font = ExtResource("2_owjaw")
 theme_override_font_sizes/font_size = 32
 text = "Update"
 
@@ -207,7 +217,7 @@ offset_left = 7.0
 offset_top = 3.0
 offset_right = 377.0
 offset_bottom = 76.0
-theme_override_fonts/font = ExtResource("4_ifx3t")
+theme_override_fonts/font = ExtResource("2_owjaw")
 theme_override_font_sizes/font_size = 48
 text = "Log Book"
 horizontal_alignment = 1
@@ -215,11 +225,11 @@ vertical_alignment = 1
 
 [node name="pageupdown" type="Label" parent="CanvasLayer/logbook"]
 layout_mode = 0
-offset_left = 124.0
-offset_top = 567.0
-offset_right = 240.0
-offset_bottom = 593.0
-theme_override_fonts/font = ExtResource("4_ifx3t")
+offset_left = 483.0
+offset_top = 433.0
+offset_right = 599.0
+offset_bottom = 459.0
+theme_override_fonts/font = ExtResource("2_owjaw")
 theme_override_font_sizes/font_size = 32
 text = "PgUp / PgDn"
 horizontal_alignment = 1
@@ -228,9 +238,9 @@ vertical_alignment = 1
 [node name="PhotoTextRec" type="TextureRect" parent="CanvasLayer/logbook"]
 layout_mode = 0
 offset_left = 39.0
-offset_top = 104.0
+offset_top = 70.0
 offset_right = 344.0
-offset_bottom = 340.0
+offset_bottom = 306.0
 expand_mode = 3
 
 [node name="brightlabel" type="Label" parent="CanvasLayer/logbook"]
@@ -239,7 +249,7 @@ offset_left = 49.0
 offset_top = 362.0
 offset_right = 184.0
 offset_bottom = 400.0
-theme_override_fonts/font = ExtResource("4_ifx3t")
+theme_override_fonts/font = ExtResource("2_owjaw")
 theme_override_font_sizes/font_size = 48
 text = "brightness"
 vertical_alignment = 1
@@ -250,7 +260,7 @@ offset_left = 50.0
 offset_top = 415.0
 offset_right = 185.0
 offset_bottom = 453.0
-theme_override_fonts/font = ExtResource("4_ifx3t")
+theme_override_fonts/font = ExtResource("2_owjaw")
 theme_override_font_sizes/font_size = 48
 text = "moist"
 vertical_alignment = 1
@@ -261,7 +271,7 @@ offset_left = 210.0
 offset_top = 366.0
 offset_right = 298.0
 offset_bottom = 404.0
-theme_override_fonts/font = ExtResource("4_ifx3t")
+theme_override_fonts/font = ExtResource("2_owjaw")
 theme_override_font_sizes/font_size = 32
 theme_override_styles/normal = SubResource("StyleBoxFlat_ifx3t")
 horizontal_alignment = 1
@@ -273,7 +283,7 @@ offset_left = 211.0
 offset_top = 414.0
 offset_right = 299.0
 offset_bottom = 452.0
-theme_override_fonts/font = ExtResource("4_ifx3t")
+theme_override_fonts/font = ExtResource("2_owjaw")
 theme_override_font_sizes/font_size = 32
 theme_override_styles/normal = SubResource("StyleBoxFlat_ifx3t")
 horizontal_alignment = 1
@@ -293,19 +303,24 @@ begin_cap_mode = 2
 end_cap_mode = 2
 
 [node name="PathFollow2D" type="PathFollow2D" parent="Path2D"]
-position = Vector2(-154, 8)
+position = Vector2(-149, 8)
 rotates = false
 loop = false
-script = ExtResource("6_lydu6")
+script = ExtResource("4_txbvq")
 
 [node name="pplant" type="AnimatedSprite2D" parent="Path2D/PathFollow2D"]
 sprite_frames = SubResource("SpriteFrames_vocu1")
-script = ExtResource("9_yk0yp")
+script = ExtResource("6_kq26m")
 
 [node name="Timer" type="Timer" parent="."]
 wait_time = 3.0
 autostart = true
 
+[node name="HTTPHOREQ" type="HTTPRequest" parent="."]
+
+[node name="HTTPDATE" type="HTTPRequest" parent="."]
+
+[connection signal="pressed" from="CanvasLayer/logbook/backToPage" to="." method="_on_back_to_page_pressed"]
 [connection signal="request_completed" from="CanvasLayer/logbook/TakePhoto/HTTPRequest" to="." method="_on_http_request_request_completed" binds= ["photobuttn"]]
 [connection signal="request_completed" from="CanvasLayer/logbook/Button/HTTPRequest" to="." method="_on_http_request_request_completed" binds= ["infobuttn"]]
 [connection signal="animation_finished" from="Path2D/PathFollow2D/pplant" to="Path2D/PathFollow2D" method="_on_pplant_animation_finished"]

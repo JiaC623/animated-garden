@@ -11,9 +11,24 @@ config_version=5
 [application]
 
 config/name="AnimatedGarden"
-run/main_scene="uid://cgy5ho8lmm8o8"
+run/main_scene="uid://b13xmoowa143k"
 config/features=PackedStringArray("4.5", "Mobile")
 config/icon="res://icon.svg"
+
+[autoload]
+
+Firebase="*res://addons/godot-firebase/firebase/firebase.tscn"
+
+[display]
+
+window/size/viewport_width=960
+window/size/viewport_height=540
+window/stretch/mode="viewport"
+window/stretch/scale_mode="integer"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/godot-firebase/plugin.cfg")
 
 [rendering]
 

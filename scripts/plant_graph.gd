@@ -5,6 +5,8 @@ extends Node2D
 @onready var moist = $CanvasLayer/logbook/moist
 @onready var bright = $CanvasLayer/logbook/bright
 @onready var update_point_arr = $Path2D/PathFollow2D
+@onready var http_valset = $HTTPHOREQ
+@onready var http_sync = $HTTPDATE
 
 var day_count = 3
 var step_distance = 35.0 # Pixels between Day 1, Day 2, etc.
@@ -22,9 +24,15 @@ var existing_log_cnt = 0
 var all_buttons = []
 var current_page = 0
 var items_per_page = 9
+var last_sync_time = 0
 
-var url1 = "https://esp32photo-1dc90-default-rtdb.firebaseio.com/sensor_data.json"
-var url2 = "https://esp32photo-1dc90-default-rtdb.firebaseio.com/camera.json"
+var query = JSON.stringify({"action_req": 1})
+var phoHeaders = ["Content-Type: application/json"]
+
+const url1 = "https://esp32photo-1dc90-default-rtdb.firebaseio.com/sensor_data.json"
+const url2 = "https://esp32photo-1dc90-default-rtdb.firebaseio.com/camera.json"
+const PHOREQ_URL = "https://esp32photo-1dc90-default-rtdb.firebaseio.com/photo_request.json"
+const SYNC_URL = "https://esp32photo-1dc90-default-rtdb.firebaseio.com/last_update.json"
 
 func _ready():
 	$CanvasLayer/logbook/TakePhoto.pressed.connect(_on_button_pressed.bind("photobuttn"))
@@ -73,7 +81,19 @@ func _on_button_pressed(button_name: String) -> void:
 		http_animation.request(url1)
 	elif button_name == "photobuttn":
 		#print("photobutton pressed!")
-		http_photo.request(url2)
+		http_valset.request(PHOREQ_URL, phoHeaders, HTTPClient.METHOD_PATCH, query)
+		await http_valset.request_completed
+		var photo_ready = false
+		while not photo_ready:
+			await get_tree().create_timer(0.5).timeout
+			http_sync.request(SYNC_URL)
+			var resSync = await http_sync.request_completed
+			var new_time = int(resSync[3].get_string_from_utf8())
+			
+			if new_time > last_sync_time:
+				last_sync_time = new_time
+				photo_ready = true
+		http_photo.request(url2 + "?t=" + str(Time.get_ticks_msec()))
 	
 func _on_http_request_request_completed(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray, type: String) -> void:
 	if response_code == 200:
@@ -103,8 +123,8 @@ func _on_http_request_request_completed(result: int, response_code: int, headers
 			"photobuttn":
 				var image_data = Marshalls.base64_to_raw(parse_result)
 				display_photo(image_data)
-				create_btn(image_data)
-				log_row_cnt += 1
+				#create_btn(image_data)
+				#log_row_cnt += 1
 
 	else:
 		print("Failed to connect. Response code: ", response_code)
@@ -159,3 +179,7 @@ func send_data(points:Array[Vector2]):
 
 func _on_timer_timeout() -> void:
 	http_animation.request(url1) # Replace with function body.
+
+
+func _on_back_to_page_pressed() -> void:
+	get_tree().change_scene_to_file("res://scenes/main.tscn")
