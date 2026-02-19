@@ -18,11 +18,14 @@ config/icon="res://icon.svg"
 [autoload]
 
 Firebase="*res://addons/godot-firebase/firebase/firebase.tscn"
+Global="*res://Global.gd"
 
 [display]
 
-window/size/viewport_width=960
-window/size/viewport_height=540
+window/size/viewport_width=480
+window/size/viewport_height=270
+window/size/window_width_override=960
+window/size/window_height_override=540
 window/stretch/mode="viewport"
 window/stretch/scale_mode="integer"
 
@@ -34,3 +37,4 @@ enabled=PackedStringArray("res://addons/godot-firebase/plugin.cfg")
 
 textures/canvas_textures/default_texture_filter=0
 renderer/rendering_method="mobile"
+environment/defaults/default_clear_color=Color(0.07812133, 0.22918236, 0.2863427, 1)

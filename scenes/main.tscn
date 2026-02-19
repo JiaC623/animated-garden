@@ -1,18 +1,33 @@
-[gd_scene load_steps=9 format=3 uid="uid://b13xmoowa143k"]
+[gd_scene load_steps=12 format=3 uid="uid://b13xmoowa143k"]
 
 [ext_resource type="Texture2D" uid="uid://cr2mcgfvdk5lq" path="res://assets/prlxBackground1.png" id="1_o5qli"]
 [ext_resource type="Script" uid="uid://bbfs5dbt858kq" path="res://scripts/main.gd" id="1_tbgi4"]
-[ext_resource type="Texture2D" uid="uid://dncd4uljgferg" path="res://assets/plant-cartoon.jpg" id="2_0wfyh"]
+[ext_resource type="Script" uid="uid://b6w74emfp8gfx" path="res://scripts/cloud_manage.gd" id="2_eb6dy"]
 [ext_resource type="Texture2D" uid="uid://bw13iwh4av6uu" path="res://assets/prlxBackground2.png" id="2_jyhfs"]
 [ext_resource type="Texture2D" uid="uid://xlr2d8bewmi1" path="res://assets/prlxBackground3.png" id="3_tbgi4"]
+[ext_resource type="PackedScene" uid="uid://bd84jxj6twe" path="res://scenes/cloud.tscn" id="3_ya4ey"]
 [ext_resource type="FontFile" uid="uid://cvr8qmjtihjbl" path="res://assets/at01.ttf" id="6_tipki"]
 [ext_resource type="Texture2D" uid="uid://by04u8f82bhxc" path="res://assets/offlight.png" id="7_85g3d"]
 [ext_resource type="Texture2D" uid="uid://8o56nsu6f21k" path="res://assets/onlight.png" id="8_choun"]
+[ext_resource type="Texture2D" uid="uid://c7gbso44qxysi" path="res://assets/Bay Window1.png" id="8_tipki"]
+[ext_resource type="Texture2D" uid="uid://cy37gow1kv67" path="res://assets/Camera.png" id="9_85g3d"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_tbgi4")
 
+[node name="CloudManage" type="Node2D" parent="."]
+script = ExtResource("2_eb6dy")
+cloud_scene = ExtResource("3_ya4ey")
+
+[node name="Cloud" parent="CloudManage" instance=ExtResource("3_ya4ey")]
+position = Vector2(542, 25)
+
+[node name="BayWindow1" type="Sprite2D" parent="."]
+position = Vector2(240, 135)
+texture = ExtResource("8_tipki")
+
 [node name="parallaxCollection" type="Node2D" parent="."]
+visible = false
 position = Vector2(560, 495)
 
 [node name="Parallax2D" type="Parallax2D" parent="parallaxCollection"]
@@ -48,25 +63,29 @@ repeat_times = 6
 [node name="Sprite2D" type="Sprite2D" parent="parallaxCollection/Parallax2D3"]
 texture = ExtResource("3_tbgi4")
 
-[node name="plantCartoon" type="Sprite2D" parent="."]
-position = Vector2(404.25, 235.375)
-scale = Vector2(0.38437513, 0.3834375)
-texture = ExtResource("2_0wfyh")
-
 [node name="pageJump" type="Button" parent="."]
-offset_left = 652.0
-offset_top = 229.0
-offset_right = 776.0
-offset_bottom = 297.0
+offset_left = 425.0
+offset_top = 206.0
+offset_right = 472.0
+offset_bottom = 260.0
 theme_override_fonts/font = ExtResource("6_tipki")
-theme_override_font_sizes/font_size = 32
-text = "Jump to Page"
+theme_override_font_sizes/font_size = 16
+text = "monitor"
+
+[node name="albumjump" type="Button" parent="."]
+offset_left = 425.0
+offset_top = 144.0
+offset_right = 472.0
+offset_bottom = 198.0
+theme_override_fonts/font = ExtResource("6_tipki")
+theme_override_font_sizes/font_size = 16
+text = "album"
 
 [node name="lampTogggle" type="TextureButton" parent="."]
-offset_left = 679.0
-offset_top = 312.0
-offset_right = 761.0
-offset_bottom = 396.0
+offset_left = 423.0
+offset_top = 9.0
+offset_right = 468.0
+offset_bottom = 57.0
 toggle_mode = true
 texture_normal = ExtResource("7_85g3d")
 texture_pressed = ExtResource("8_choun")
@@ -76,10 +95,10 @@ stretch_mode = 0
 [node name="HTTPRequest" type="HTTPRequest" parent="lampTogggle"]
 
 [node name="snaphoto" type="Button" parent="."]
-offset_left = 653.0
-offset_top = 150.0
-offset_right = 779.0
-offset_bottom = 211.0
+offset_left = 202.0
+offset_top = 85.0
+offset_right = 280.0
+offset_bottom = 190.0
 
 [node name="HTTPDisplay" type="HTTPRequest" parent="snaphoto"]
 
@@ -87,37 +106,50 @@ offset_bottom = 211.0
 
 [node name="HTTPRequest" type="HTTPRequest" parent="snaphoto"]
 
+[node name="ChangeCoursorCam" type="TextureButton" parent="."]
+offset_left = 9.0
+offset_top = 233.0
+offset_right = 41.0
+offset_bottom = 265.0
+texture_normal = ExtResource("9_85g3d")
+stretch_mode = 0
+
 [node name="popup" type="Control" parent="."]
+visible = false
 layout_mode = 3
 anchors_preset = 0
-offset_left = 186.0
-offset_top = 42.0
-offset_right = 619.0
-offset_bottom = 468.0
+offset_left = 157.0
+offset_top = 39.0
+offset_right = 325.0
+offset_bottom = 258.0
 
 [node name="actualPhoto" type="TextureRect" parent="popup"]
 modulate = Color(1, 1, 1, 0)
 layout_mode = 0
-offset_left = 91.0
-offset_top = 91.0
-offset_right = 355.0
-offset_bottom = 291.0
+offset_left = 5.0
+offset_top = 44.0
+offset_right = 154.0
+offset_bottom = 151.0
 expand_mode = 3
 
 [node name="okbutton" type="Button" parent="popup"]
 visible = false
 layout_mode = 0
-offset_left = 172.0
-offset_top = 329.0
-offset_right = 272.0
-offset_bottom = 370.0
+offset_left = 41.0
+offset_top = 176.0
+offset_right = 125.0
+offset_bottom = 210.0
 theme_override_fonts/font = ExtResource("6_tipki")
 theme_override_font_sizes/font_size = 32
 toggle_mode = true
 text = "OK!"
 
 [connection signal="pressed" from="pageJump" to="." method="_on_page_jump_pressed"]
+[connection signal="pressed" from="albumjump" to="." method="_on_albumjump_pressed"]
 [connection signal="toggled" from="lampTogggle" to="." method="_on_lamp_togggle_toggled"]
+[connection signal="mouse_entered" from="snaphoto" to="." method="_on_snaphoto_mouse_entered"]
+[connection signal="mouse_exited" from="snaphoto" to="." method="_on_snaphoto_mouse_exited"]
 [connection signal="pressed" from="snaphoto" to="." method="_on_snaphoto_pressed"]
 [connection signal="request_completed" from="snaphoto/HTTPDisplay" to="." method="_on_http_display_request_completed"]
+[connection signal="pressed" from="ChangeCoursorCam" to="." method="_on_change_coursor_cam_pressed"]
 [connection signal="toggled" from="popup/okbutton" to="." method="_on_okbutton_toggled"]

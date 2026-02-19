@@ -1,0 +1,56 @@
+[gd_scene load_steps=3 format=3 uid="uid://cprbaxae0qjeq"]
+
+[ext_resource type="Script" uid="uid://dvd4ftejmyt5t" path="res://scripts/album.gd" id="1_bgfgf"]
+[ext_resource type="FontFile" uid="uid://cvr8qmjtihjbl" path="res://assets/at01.ttf" id="2_r83bq"]
+
+[node name="album" type="Node2D"]
+script = ExtResource("1_bgfgf")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+offset_right = 480.0
+offset_bottom = 270.0
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="LogContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+
+[node name="spacing" type="Label" parent="MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(5, 0)
+layout_mode = 2
+text = " "
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+expand_mode = 2
+
+[node name="spacing2" type="Label" parent="MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(5, 0)
+layout_mode = 2
+text = " "
+
+[node name="PicInfoContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+alignment = 1
+
+[node name="Date" type="Label" parent="MarginContainer/HBoxContainer/PicInfoContainer"]
+layout_mode = 2
+
+[node name="Weather" type="Label" parent="MarginContainer/HBoxContainer/PicInfoContainer"]
+layout_mode = 2
+
+[node name="ButtonContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="MarginContainer/HBoxContainer/ButtonContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_r83bq")
+text = "Back"

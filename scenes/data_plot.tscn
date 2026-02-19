@@ -1,0 +1,74 @@
+[gd_scene load_steps=5 format=3 uid="uid://dxmiyal2gjky7"]
+
+[ext_resource type="Script" uid="uid://by7o2wff8tkqb" path="res://scripts/data_plot.gd" id="1_psgoq"]
+[ext_resource type="FontFile" uid="uid://cvr8qmjtihjbl" path="res://assets/at01.ttf" id="1_v2ya7"]
+[ext_resource type="Script" uid="uid://bl5hieo3gva85" path="res://scripts/line_chart_drawer.gd" id="2_df8ms"]
+[ext_resource type="Script" uid="uid://byp8mse0tyk7y" path="res://scripts/static_v_lines.gd" id="2_psgoq"]
+
+[node name="dataPlot" type="Node2D"]
+script = ExtResource("1_psgoq")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+offset_right = 480.0
+offset_bottom = 270.0
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="ChartTitle" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_v2ya7")
+theme_override_font_sizes/font_size = 32
+text = "Plant History Chart"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 180)
+layout_mode = 2
+
+[node name="YAxisArea" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(30, 0)
+layout_mode = 2
+
+[node name="StaticVLines" type="Control" parent="MarginContainer/VBoxContainer/HBoxContainer/YAxisArea"]
+layout_mode = 2
+script = ExtResource("2_psgoq")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(420, 0)
+layout_mode = 2
+
+[node name="LineChartDrawer" type="Control" parent="MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer"]
+layout_mode = 2
+script = ExtResource("2_df8ms")
+
+[node name="HTTPPointUpdate" type="HTTPRequest" parent="MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer"]
+
+[node name="Timer" type="Timer" parent="MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer"]
+wait_time = 5.0
+autostart = true
+
+[node name="XAxisTitle" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_v2ya7")
+text = "Record /Day"
+horizontal_alignment = 1
+
+[node name="Legends" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="MoistRect" type="ColorRect" parent="MarginContainer/VBoxContainer/Legends"]
+custom_minimum_size = Vector2(20, 0)
+layout_mode = 2
+
+[node name="MoistLeg" type="Label" parent="MarginContainer/VBoxContainer/Legends"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_v2ya7")
+text = "Moisture"
+
+[connection signal="request_completed" from="MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer/HTTPPointUpdate" to="MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer/LineChartDrawer" method="_on_http_point_update_request_completed"]
+[connection signal="timeout" from="MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer/Timer" to="MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer/LineChartDrawer" method="_on_timer_timeout"]
