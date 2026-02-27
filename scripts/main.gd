@@ -1,4 +1,5 @@
 extends Node2D
+@onready var http_sensing = $water/WaterHTTP
 @onready var http_lamp = $lampTogggle/HTTPRequest
 @onready var http_prephoto = $snaphoto/HTTPRequest
 @onready var http_syncheck = $snaphoto/HTTPRequest2
@@ -6,8 +7,11 @@ extends Node2D
 @onready var popup_window = $popup
 @onready var actual_picture = $popup/actualPhoto
 @onready var ok_button = $popup/okbutton
+@onready var curtain_btn_r = $CurtainBtnR
+@onready var curtain_btn_l = $CurtainBtnL
+@onready var close_bay_window = $BayWindow2
 
-var normal_cursor = load("res://assets/pointer.png")
+var normal_cursor = load("res://assets/Leaf Cursor.png")
 var active_mode_cursor = load("res://assets/cam.png")
 var hover_confirm_cursor = load("res://assets/spark.png")
 var is_in_selection_mode = false
@@ -17,6 +21,10 @@ var lampOffQuery = JSON.stringify({"lamp_sta": 0})
 var lampHeaders = ["Content-Type: application/json"]
 const LIGHT_REQ = "https://esp32photo-1dc90-default-rtdb.firebaseio.com/photo_request.json"
 
+var sensingOnQuery = JSON.stringify({"water_can": 1})
+var sensingHeaders = ["Content-Type: application/json"]
+const SENSE_REQ = "https://esp32photo-1dc90-default-rtdb.firebaseio.com/photo_request.json"
+
 var last_sync_time = 0
 var query = JSON.stringify({"action_req": 1})
 var phoHeaders = ["Content-Type: application/json"]
@@ -25,9 +33,23 @@ const SYNC_URL = "https://esp32photo-1dc90-default-rtdb.firebaseio.com/last_upda
 const PHOGET_URL = "https://esp32photo-1dc90-default-rtdb.firebaseio.com/camera.json"
 
 
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	Input.set_custom_mouse_cursor(normal_cursor)
+	curtain_btn_l.toggled.connect(_on_curtain_button_toggled.bind(curtain_btn_r))
+	curtain_btn_r.toggled.connect(_on_curtain_button_toggled.bind(curtain_btn_l))
+
+func _on_curtain_button_toggled(is_on: bool, target_button: Button):
+	target_button.set_pressed_no_signal(is_on)
+	if is_on:
+		http_lamp.request(LIGHT_REQ, lampHeaders, HTTPClient.METHOD_PATCH, lampOnQuery)
+		close_bay_window.visible = true
+		print("The light is now ON")
+	else:
+		http_lamp.request(LIGHT_REQ, lampHeaders, HTTPClient.METHOD_PATCH, lampOffQuery)
+		close_bay_window.visible = false
+		print("light is OFF")
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
@@ -126,3 +148,11 @@ func _on_snaphoto_mouse_exited() -> void:
 
 func _on_albumjump_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/album.tscn")
+
+
+func _on_water_pressed() -> void:
+	http_sensing.request(SENSE_REQ, sensingHeaders, HTTPClient.METHOD_PATCH, sensingOnQuery)
+	Global.start_new_log()
+
+func _on_water_http_request_completed(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray) -> void:
+	pass # Replace with function body.

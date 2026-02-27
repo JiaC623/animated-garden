@@ -1,5 +1,5 @@
 extends Node2D
-@onready var displayLabel = $Label
+@onready var home_button = $MarginContainer/HBoxContainer/ButtonContainer/HomeButton
 @onready var photo_textrec = $MarginContainer/HBoxContainer/TextureRect
 @onready var log_container = $MarginContainer/HBoxContainer/LogContainer
 @onready var date_display_label = $MarginContainer/HBoxContainer/PicInfoContainer/Date
@@ -14,7 +14,8 @@ func load_all_pictures():
 	var cnt = 0
 	for entry in Global.log_entries:
 		var btn = Button.new()
-		btn.text = "Log " + str(cnt)
+		var date_time = Time.get_datetime_string_from_system(false,true)
+		btn.text = date_time
 		btn.add_theme_font_size_override("font_size", 16)
 		btn.add_theme_font_override("font", pixel_font)
 		btn.custom_minimum_size = Vector2(16, 10)
@@ -56,7 +57,7 @@ func display_date(date_data):
 
 func _on_dynamic_button_pressed(image_data, date_data):
 	display_photo(image_data)
-	display_date(date_data)
+	#display_date(date_data)
 	#print("display log")
 
 func display_photo(image_data):
@@ -74,3 +75,7 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	pass
+
+
+func _on_home_button_pressed() -> void:
+	get_tree().change_scene_to_file("res://scenes/main.tscn")
