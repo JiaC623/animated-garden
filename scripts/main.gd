@@ -85,7 +85,7 @@ func _finish_action():
 func _on_water_can_in_area(bool_val):
 	#print(bool_val)
 	_on_water_pressed()
-	#print("on water triggered")
+	print("on water triggered")
 
 func _on_take_pic_in_area(bool_val):
 	#print(bool_val)

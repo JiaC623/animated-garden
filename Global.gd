@@ -6,7 +6,7 @@ var http_request: HTTPRequest
 var sensor_url = "https://esp32photo-1dc90-default-rtdb.firebaseio.com/sensor_data.json"
 var repeat_timer: Timer
 var total_time_passed: float = 0.0
-const MAX_DURATION: float = 27.0  # 1 min for example
+const MAX_DURATION: float = 60.0  # 1 min for example
 var check_num = 6
 var is_prev_loaded = false
 
@@ -21,27 +21,27 @@ signal data_submitted(data)
 
 func start_new_log():
 	#var date_time = Time.get_datetime_string_from_system(false,true)
-	#repeat_timer.start()
+	repeat_timer.start()
 	
 	# test code only
-	var moist = 510
-	var bright = 700
-	var timestamp = "2026-03-01 23:30"
-	var date_change = 31
-	var ini_sec = 13
-	for i in range(0,6):
-		create_json_obj_list(timestamp, str(ini_sec), moist, bright, plot_date_arr)
-		moist += 50
-		bright += 100
-		ini_sec += 3
-		if i % 2 == 0:
-			var format_date = "2026-03-01 23:%d" % [date_change]
-			timestamp = format_date
-			date_change += 1
-		#print(moist, bright, timestamp)
-		sort_timestamp()
-		create_log_with_list()
-		save_entries(plotdata_logs)
+	#var moist = 510
+	#var bright = 700
+	#var timestamp = "2026-03-01 23:30"
+	#var date_change = 31
+	#var ini_sec = 13
+	#for i in range(0,6):
+		#create_json_obj_list(timestamp, str(ini_sec), moist, bright, plot_date_arr)
+		#moist += 50
+		#bright += 100
+		#ini_sec += 3
+		#if i % 2 == 0:
+			#var format_date = "2026-03-01 23:%d" % [date_change]
+			#timestamp = format_date
+			#date_change += 1
+		##print(moist, bright, timestamp)
+		#sort_timestamp()
+		#create_log_with_list()
+		#save_entries(plotdata_logs)
 
 func conserve_old_entries():
 	plotdata_logs += load_entries()
@@ -150,7 +150,7 @@ func create_log_with_list():
 			break
 	
 	if existing_entry:
-		print(existing_entry)
+		#print(existing_entry)
 		# changing existing entry
 		existing_entry["moist_points"].append(latest_data["moist"])
 		existing_entry["bright_points"].append(latest_data["bright"])
@@ -196,6 +196,7 @@ func create_log_with_list():
 
 	print("the following is from Global")
 	print(plotdata_logs)
+	save_entries(plotdata_logs)
 
 
 
@@ -230,23 +231,26 @@ func sort_timestamp():
 
 # this is for sensor data storage
 func _on_request_completed(result, response_code, headers, body):
+	if response_code == 200: print("Global water request successful")
 	var json = JSON.parse_string(body.get_string_from_utf8())
-	var group_num = json["group"]
-	if group_num < check_num:
+	#var group_num = json["group"]
+	#if group_num < check_num:
 		#print(check_num)
 		#print(group_num)
-		var timestamp = Time.get_datetime_string_from_system().left(16).replace("T", " ")
-		var ini_sec = Time.get_datetime_string_from_system().substr(16, 5)
-		var moist = json["moist"]
-		var bright = json["bright"]
-		create_json_obj_list(timestamp, ini_sec, moist, bright, plot_date_arr)
-		check_num -= 1
+	# --------------
+	var timestamp = Time.get_datetime_string_from_system().left(16).replace("T", " ")
+	var ini_sec = Time.get_datetime_string_from_system().substr(16, 5)
+	var moist = json["moist"]
+	var bright = json["bright"]
+	# append dictionary to array
+	create_json_obj_list(timestamp, ini_sec, moist, bright, plot_date_arr)
+		#check_num -= 1
 		#print("small gnum, run")
 		
 		#print("all js objs are")
 		#print(plot_date_arr)
-		sort_timestamp()
-		create_log_with_list()
+	sort_timestamp()
+	create_log_with_list()
 
 func _on_timer_timeout():
 	total_time_passed += repeat_timer.wait_time
@@ -268,7 +272,7 @@ func _ready() -> void:
 	http_request.request_completed.connect(_on_request_completed)
 	
 	repeat_timer = Timer.new()
-	repeat_timer.wait_time = 3.0
+	repeat_timer.wait_time = 10.0
 	#repeat_timer.autostart = false
 	add_child(repeat_timer)
 	repeat_timer.timeout.connect(_on_timer_timeout)
