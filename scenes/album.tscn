@@ -17,8 +17,11 @@ theme_override_constants/margin_bottom = 5
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
 layout_mode = 2
 
-[node name="LogContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer"]
-custom_minimum_size = Vector2(90, 0)
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+
+[node name="LogContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer/ScrollContainer"]
 layout_mode = 2
 
 [node name="spacing" type="Label" parent="MarginContainer/HBoxContainer"]

@@ -1,13 +1,17 @@
-extends Control
+extends VBoxContainer
 #@onready var line_draw_ctl = $"../../VBoxContainer/HBoxContainer/ScrollContainer/LineChartDrawer"
 var pixel_font = preload("res://assets/at01.ttf")
 var check_data = 0
 
 
 func create_log_btn():
+	# Array of Dictionaries
+	var existing_plotdata = Global.load_entries()
+	if existing_plotdata.size() == 0: return
 	print("this below is from chart_log_btn")
-	print(Global.plotdata_logs)
-	for item in Global.plotdata_logs:  # [0]["moist_points"] any object, int array
+	print(existing_plotdata)
+	for item in existing_plotdata:  # [0]["moist_points"] any object, int array
+		print(item["moist_points"])
 		var btn = Button.new()
 		btn.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		btn.custom_minimum_size.x = 60
@@ -17,6 +21,7 @@ func create_log_btn():
 		btn.add_theme_font_override("font", pixel_font)
 		btn.pressed.connect(self._on_generated_button_pressed.bind(item))
 		add_child(btn)
+		
 
 func update_log_btn():
 	for i in range(check_data+1, Global.plotdata_logs.size()+1):
@@ -31,7 +36,7 @@ func update_log_btn():
 		add_child(btn)
 		
 
-
+# signal declared in Global
 func _on_generated_button_pressed(info):
 	Global.data_submitted.emit(info)
 

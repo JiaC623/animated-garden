@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://b13xmoowa143k"]
+[gd_scene load_steps=21 format=3 uid="uid://b13xmoowa143k"]
 
 [ext_resource type="Texture2D" uid="uid://cr2mcgfvdk5lq" path="res://assets/prlxBackground1.png" id="1_o5qli"]
 [ext_resource type="Script" uid="uid://bbfs5dbt858kq" path="res://scripts/main.gd" id="1_tbgi4"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://xlr2d8bewmi1" path="res://assets/prlxBackground3.png" id="3_tbgi4"]
 [ext_resource type="PackedScene" uid="uid://bd84jxj6twe" path="res://scenes/cloud.tscn" id="3_ya4ey"]
 [ext_resource type="Texture2D" uid="uid://dgphb075em627" path="res://assets/Bay Window2.png" id="5_trceg"]
+[ext_resource type="Texture2D" uid="uid://cwrenys814lx1" path="res://assets/Pot Plant1.png" id="6_muem4"]
 [ext_resource type="FontFile" uid="uid://cvr8qmjtihjbl" path="res://assets/at01.ttf" id="6_tipki"]
 [ext_resource type="Texture2D" uid="uid://by04u8f82bhxc" path="res://assets/offlight.png" id="7_85g3d"]
 [ext_resource type="Texture2D" uid="uid://8o56nsu6f21k" path="res://assets/onlight.png" id="8_choun"]
@@ -15,6 +16,12 @@
 [ext_resource type="Texture2D" uid="uid://cwkmk7pkl65et" path="res://assets/GraphJournal.png" id="10_jkv2x"]
 [ext_resource type="Texture2D" uid="uid://gs4dmsvj6jjd" path="res://assets/PhotoAlbum.png" id="11_jbj1t"]
 [ext_resource type="Texture2D" uid="uid://b0w4v73naeg2k" path="res://assets/Watering Can.png" id="12_eb6dy"]
+[ext_resource type="Script" uid="uid://c7gnf8bcs7uu" path="res://scripts/watering_can_sprite.gd" id="17_dp3eg"]
+[ext_resource type="Script" uid="uid://bm11jt6lbq44v" path="res://scripts/pot_plant_area.gd" id="18_dp3eg"]
+[ext_resource type="Script" uid="uid://c1h5sovtfj0q1" path="res://scripts/camera_sprite.gd" id="19_0ld40"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_muem4"]
+size = Vector2(74, 106)
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_tbgi4")
@@ -34,6 +41,10 @@ texture = ExtResource("8_tipki")
 visible = false
 position = Vector2(240, 135)
 texture = ExtResource("5_trceg")
+
+[node name="PotPlant1" type="Sprite2D" parent="."]
+position = Vector2(240, 138)
+texture = ExtResource("6_muem4")
 
 [node name="parallaxCollection" type="Node2D" parent="."]
 visible = false
@@ -120,10 +131,12 @@ stretch_mode = 0
 [node name="HTTPRequest" type="HTTPRequest" parent="lampTogggle"]
 
 [node name="snaphoto" type="Button" parent="."]
+modulate = Color(1, 1, 1, 0.27058825)
 offset_left = 202.0
 offset_top = 85.0
 offset_right = 280.0
 offset_bottom = 190.0
+mouse_filter = 2
 
 [node name="HTTPDisplay" type="HTTPRequest" parent="snaphoto"]
 
@@ -132,10 +145,10 @@ offset_bottom = 190.0
 [node name="HTTPRequest" type="HTTPRequest" parent="snaphoto"]
 
 [node name="ChangeCoursorCam" type="TextureButton" parent="."]
-offset_left = 7.0
-offset_top = 210.0
-offset_right = 60.0
-offset_bottom = 260.0
+offset_left = -84.0
+offset_top = 209.0
+offset_right = -31.0
+offset_bottom = 259.0
 texture_normal = ExtResource("9_85g3d")
 stretch_mode = 0
 
@@ -170,15 +183,16 @@ toggle_mode = true
 text = "OK!"
 
 [node name="water" type="TextureButton" parent="."]
-offset_left = 316.0
-offset_top = 150.0
-offset_right = 380.0
-offset_bottom = 214.0
+offset_left = 518.0
+offset_top = 77.0
+offset_right = 582.0
+offset_bottom = 141.0
 texture_normal = ExtResource("12_eb6dy")
 
 [node name="WaterHTTP" type="HTTPRequest" parent="water"]
 
 [node name="CurtainBtnR" type="Button" parent="."]
+modulate = Color(1, 1, 1, 0.27058825)
 offset_left = 345.0
 offset_top = 114.0
 offset_right = 388.0
@@ -186,11 +200,54 @@ offset_bottom = 159.0
 toggle_mode = true
 
 [node name="CurtainBtnL" type="Button" parent="."]
+modulate = Color(1, 1, 1, 0.27058825)
 offset_left = 89.0
 offset_top = 113.0
 offset_right = 132.0
 offset_bottom = 158.0
 toggle_mode = true
+
+[node name="WateringCanSprite" type="Sprite2D" parent="."]
+position = Vector2(336, 183)
+texture = ExtResource("12_eb6dy")
+script = ExtResource("17_dp3eg")
+
+[node name="Button" type="Button" parent="WateringCanSprite"]
+self_modulate = Color(1, 1, 1, 0)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -32.0
+offset_top = -32.0
+offset_right = -32.0
+offset_bottom = -32.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PotPlantArea" type="Area2D" parent="."]
+position = Vector2(241, 141)
+script = ExtResource("18_dp3eg")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PotPlantArea"]
+shape = SubResource("RectangleShape2D_muem4")
+
+[node name="CameraSprite" type="Sprite2D" parent="."]
+position = Vector2(37, 244)
+scale = Vector2(1.795, 1.7)
+texture = ExtResource("9_85g3d")
+script = ExtResource("19_0ld40")
+
+[node name="Button" type="Button" parent="CameraSprite"]
+self_modulate = Color(1, 1, 1, 0)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -16.0
+offset_top = -16.0
+offset_right = -16.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [connection signal="pressed" from="pageJump" to="." method="_on_page_jump_pressed"]
 [connection signal="pressed" from="albumjump" to="." method="_on_albumjump_pressed"]
@@ -203,3 +260,9 @@ toggle_mode = true
 [connection signal="toggled" from="popup/okbutton" to="." method="_on_okbutton_toggled"]
 [connection signal="pressed" from="water" to="." method="_on_water_pressed"]
 [connection signal="request_completed" from="water/WaterHTTP" to="." method="_on_water_http_request_completed"]
+[connection signal="button_down" from="WateringCanSprite/Button" to="WateringCanSprite" method="_on_button_button_down"]
+[connection signal="button_up" from="WateringCanSprite/Button" to="WateringCanSprite" method="_on_button_button_up"]
+[connection signal="mouse_entered" from="PotPlantArea" to="." method="_on_pot_plant_area_mouse_entered"]
+[connection signal="mouse_exited" from="PotPlantArea" to="." method="_on_pot_plant_area_mouse_exited"]
+[connection signal="button_down" from="CameraSprite/Button" to="CameraSprite" method="_on_button_button_down"]
+[connection signal="button_up" from="CameraSprite/Button" to="CameraSprite" method="_on_button_button_up"]

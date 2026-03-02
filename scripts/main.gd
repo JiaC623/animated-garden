@@ -10,11 +10,15 @@ extends Node2D
 @onready var curtain_btn_r = $CurtainBtnR
 @onready var curtain_btn_l = $CurtainBtnL
 @onready var close_bay_window = $BayWindow2
+# drag version
+@onready var water_can_trig = $WateringCanSprite
+@onready var cam_trig = $CameraSprite
 
 var normal_cursor = load("res://assets/Leaf Cursor.png")
 var active_mode_cursor = load("res://assets/cam.png")
 var hover_confirm_cursor = load("res://assets/spark.png")
 var is_in_selection_mode = false
+var prev_load_cnt = 0
 
 var lampOnQuery = JSON.stringify({"lamp_sta": 1})
 var lampOffQuery = JSON.stringify({"lamp_sta": 0})
@@ -39,6 +43,9 @@ func _ready() -> void:
 	Input.set_custom_mouse_cursor(normal_cursor)
 	curtain_btn_l.toggled.connect(_on_curtain_button_toggled.bind(curtain_btn_r))
 	curtain_btn_r.toggled.connect(_on_curtain_button_toggled.bind(curtain_btn_l))
+	
+	water_can_trig.water_can_in_area.connect(_on_water_can_in_area)
+	cam_trig.take_pic_in_area.connect(_on_take_pic_in_area)
 
 func _on_curtain_button_toggled(is_on: bool, target_button: Button):
 	target_button.set_pressed_no_signal(is_on)
@@ -52,8 +59,8 @@ func _on_curtain_button_toggled(is_on: bool, target_button: Button):
 		print("light is OFF")
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
+#func _process(delta: float) -> void:
+	#pass
 
 
 func _on_page_jump_pressed() -> void:
@@ -74,12 +81,25 @@ func _finish_action():
 	Input.set_custom_mouse_cursor(normal_cursor)
 	print("Action complete: Cursor reset.")
 
+
+func _on_water_can_in_area(bool_val):
+	#print(bool_val)
+	_on_water_pressed()
+	#print("on water triggered")
+
+func _on_take_pic_in_area(bool_val):
+	#print(bool_val)
+	_on_snaphoto_pressed()
+	#print("drag snap photo signal triggered")
+
 func _on_snaphoto_pressed() -> void:
-	if is_in_selection_mode:
-		_finish_action()
-	else:
-		return
-		
+	print("on snapshot button triggered")
+	# cursor input ignored, 
+	#if is_in_selection_mode:
+		#_finish_action()
+	#else:
+		#return
+	# change camera request variable
 	http_prephoto.request(PHOREQ_URL, phoHeaders, HTTPClient.METHOD_PATCH, query)
 	await http_prephoto.request_completed
 	var photo_ready = false
@@ -92,6 +112,7 @@ func _on_snaphoto_pressed() -> void:
 		if new_time > last_sync_time:
 			last_sync_time = new_time
 			photo_ready = true
+	# here fetch the image data
 	http_disphoto.request(PHOGET_URL + "?t=" + str(Time.get_ticks_msec()))
 
 func display_photo(image_data):
@@ -109,7 +130,9 @@ func display_photo(image_data):
 	ok_button.visible = true
 	ok_button.modulate.a = 1.0
 	
-	Global.add_entry(image_data)
+	#var taken_date = Time.get_datetime_string_from_system(false,true)
+	#Global.date_entry(taken_date)
+	#Global.add_entry(image_data)
 
 func _on_okbutton_toggled(toggled_on: bool) -> void:
 	#print("toggled button")
@@ -130,7 +153,36 @@ func _on_http_display_request_completed(result: int, response_code: int, headers
 		var parse_result = json.get_data()
 		var image_data = Marshalls.base64_to_raw(parse_result)
 		display_photo(image_data)
+		Global.add_img_entry(save_pair_image_datetime(image_data), prev_load_cnt)
+		prev_load_cnt += 1
 
+
+func save_pair_image_datetime(image_data:PackedByteArray) -> Dictionary:
+	var file_dt = get_readable_filename()
+	var cur_dt = Time.get_datetime_string_from_system().replace("T", " ")
+	var img_path = "user://" + file_dt + ".jpg"
+	var image = Image.new()
+	var error = image.load_jpg_from_buffer(image_data)
+	if error != OK:
+		print("Failed to load image from buffer: ", error)
+		return {}
+	image.save_jpg(img_path)
+	
+	var entry = {
+		"date": cur_dt,
+		"image_path": img_path
+	}
+	return entry
+
+func get_readable_filename() -> String:
+	var datetime = Time.get_datetime_dict_from_system()
+	# Format: YYYYMMDD_HHMMSS
+	var timestamp = "%04d%02d%02d_%02d%02d%02d" % [
+		datetime.year, datetime.month, datetime.day,
+		datetime.hour, datetime.minute, datetime.second
+	]
+	return "img_" + timestamp
+	
 
 func _on_change_coursor_cam_pressed() -> void:
 	is_in_selection_mode = true
@@ -155,4 +207,11 @@ func _on_water_pressed() -> void:
 	Global.start_new_log()
 
 func _on_water_http_request_completed(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray) -> void:
-	pass # Replace with function body.
+	pass # sensing data is processed in Global.gd
+
+
+#func _on_pot_plant_area_mouse_entered() -> void:
+	#print("detect")
+	
+#func _on_pot_plant_area_mouse_exited() -> void:
+	#print("leave")

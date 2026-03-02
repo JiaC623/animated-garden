@@ -20,11 +20,11 @@ theme_override_constants/margin_bottom = 10
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
 layout_mode = 2
 
-[node name="LogBtns" type="VBoxContainer" parent="MarginContainer/HBoxContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/HBoxContainer"]
 custom_minimum_size = Vector2(60, 0)
 layout_mode = 2
 
-[node name="LogBtnContainer" type="Control" parent="MarginContainer/HBoxContainer/LogBtns"]
+[node name="LogBtns" type="VBoxContainer" parent="MarginContainer/HBoxContainer/ScrollContainer"]
 layout_mode = 2
 script = ExtResource("2_vlomf")
 

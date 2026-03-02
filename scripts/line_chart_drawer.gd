@@ -5,6 +5,8 @@ var bright_data_points = []
 var chart_height = 160.0
 var pixel_font = preload("res://assets/at01.ttf")
 
+var secstr = ""
+
 @onready var http_point_update = $"../HTTPPointUpdate"
 @onready var timer = $"../Timer"
 var sensor_url = "https://esp32photo-1dc90-default-rtdb.firebaseio.com/sensor_data.json"
@@ -23,7 +25,9 @@ func _on_http_point_update_request_completed(result: int, response_code: int, he
 		var moist_data = parse_result["moist"]
 		new_point_update(moist_data)
 
+
 func new_point_update(value):
+	# old version
 	data_points.append(value)
 	update_chart_dimensions()
 	await get_tree().process_frame
@@ -34,14 +38,20 @@ func new_bright_points_update(value):
 	await get_tree().process_frame
 
 # data = Global.plotdata_logs[i]
-func _on_data_received(data):
-	for point in data["moist_points"]:  # dictionary value, array of int
-		new_point_update(point)
-	for bpoint in data["bright_points"]:
-		new_bright_points_update(bpoint)
-	
+func _on_data_received(data):  # dictionary value, array of int
+	data_points = data["moist_points"]
+	bright_data_points = data["bright_points"]
+	secstr = data["ini_sec"]
+	update_chart_dimensions()
+	await get_tree().process_frame
+	scroll_bar_repos()
+	# old version
+	#for point in data["moist_points"]:  
+		#new_point_update(point)
+	#for bpoint in data["bright_points"]:
+		#new_bright_points_update(bpoint)	
 
-# Called when the node enters the scene tree for the first time.
+
 func _ready() -> void:
 	Global.data_submitted.connect(_on_data_received)
 	
@@ -62,11 +72,11 @@ func update_chart_dimensions():
 func _draw():
 	if data_points.size() <= 0: 
 		return
-	var max_val = data_points.max() if data_points.max() > 0 else 400.0
+	var max_val = data_points.max() if data_points.max() > 0 else 800.0
 	
-	if data_points.size() < 2:
-		return
 	var points = []
+	var measure_gap = 4
+	var secint = int(secstr)
 	if max_val == 0: max_val = 1 # Avoid division by zero
 	
 	for i in range(data_points.size()):
@@ -77,7 +87,8 @@ func _draw():
 		var p_top = Vector2(x, 0)
 		var p_bottom = Vector2(x, chart_height)
 		draw_line(p_top, p_bottom, Color(1, 1, 1, 0.2), 1.0)
-		draw_string(pixel_font, p_bottom + Vector2(-15, 10), "Day " + str(i+1), HORIZONTAL_ALIGNMENT_CENTER, -1, 16)
+		draw_string(pixel_font, p_bottom + Vector2(-15, 10), "Sec " + str(secint), HORIZONTAL_ALIGNMENT_CENTER, -1, 16)
+		secint += measure_gap
 		
 	draw_polyline(points, Color.CYAN, 0.5, true)
 	for p in points:

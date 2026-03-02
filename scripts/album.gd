@@ -1,7 +1,7 @@
 extends Node2D
 @onready var home_button = $MarginContainer/HBoxContainer/ButtonContainer/HomeButton
 @onready var photo_textrec = $MarginContainer/HBoxContainer/TextureRect
-@onready var log_container = $MarginContainer/HBoxContainer/LogContainer
+@onready var log_container = $MarginContainer/HBoxContainer/ScrollContainer/LogContainer
 @onready var date_display_label = $MarginContainer/HBoxContainer/PicInfoContainer/Date
 @onready var weather_display_label = $MarginContainer/HBoxContainer/PicInfoContainer/Weather
 var pixel_font = preload("res://assets/at01.ttf")
@@ -9,22 +9,36 @@ var pixel_font = preload("res://assets/at01.ttf")
 var btn_spacing = 16
 var log_row_cnt = 0
 var log_col_cnt = 0
+var all_pairs = []
+
+func conserve_old_imgs():
+	if not Global.is_prev_loaded:
+		all_pairs += Global.load_img_pairs()
+	all_pairs += Global.img_log_entries
+	for item in all_pairs:
+		var btn = Button.new()
+		btn.text = item["date"]
+		btn.add_theme_font_size_override("font_size", 16)
+		btn.add_theme_font_override("font", pixel_font)
+		btn.custom_minimum_size = Vector2(16, 10)
+		btn.pressed.connect(self._on_dynamic_button_pressed.bind(item["image_path"]))
+		log_container.add_child(btn)
 
 func load_all_pictures():
 	var cnt = 0
 	for entry in Global.log_entries:
-		var btn = Button.new()
-		var date_time = Time.get_datetime_string_from_system(false,true)
-		btn.text = date_time
-		btn.add_theme_font_size_override("font_size", 16)
-		btn.add_theme_font_override("font", pixel_font)
-		btn.custom_minimum_size = Vector2(16, 10)
+		for time in Global.date_entries:
+			var btn = Button.new()
+			btn.text = time
+			btn.add_theme_font_size_override("font_size", 16)
+			btn.add_theme_font_override("font", pixel_font)
+			btn.custom_minimum_size = Vector2(16, 10)
 		
-		log_container.add_child(btn)
-		btn.global_position = Vector2(10 + 10*log_col_cnt, 10 + 16*log_row_cnt)
-		log_row_cnt += 1
-		btn.pressed.connect(self._on_dynamic_button_pressed.bind(entry, Global.date_entries[cnt]))
-		cnt += 1
+			log_container.add_child(btn)
+			btn.global_position = Vector2(10 + 10*log_col_cnt, 10 + 16*log_row_cnt)
+			log_row_cnt += 1
+			btn.pressed.connect(self._on_dynamic_button_pressed.bind(entry, Global.date_entries[cnt]))
+			cnt += 1
 		
 		
 func display_date(date_data):
@@ -54,9 +68,22 @@ func display_date(date_data):
 	#
 	#all_buttons.append(btn)
 	#update_page_visibility()
+	
+func _on_dynamic_button_pressed(img_path):
+	if not FileAccess.file_exists(img_path):
+		print("File truly not found on disk: ", img_path)
+		return
+	var image = Image.new()
+	var error = OK
+	# bypass Godot's file extension check and force it to attempt to parse the bytes as a specific format
+	error = image.load_jpg_from_buffer(FileAccess.get_file_as_bytes(img_path))
+	if error != OK:
+		print("Error code: ", error)
+		return
+	photo_textrec.texture = ImageTexture.create_from_image(image)
 
-func _on_dynamic_button_pressed(image_data, date_data):
-	display_photo(image_data)
+#func _on_dynamic_button_pressed(image_data, date_data):
+	#display_photo(image_data)
 	#display_date(date_data)
 	#print("display log")
 
@@ -70,7 +97,7 @@ func display_photo(image_data):
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	load_all_pictures()
+	conserve_old_imgs()
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
