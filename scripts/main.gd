@@ -9,6 +9,7 @@ extends Node2D
 @onready var ok_button = $popup/okbutton
 @onready var curtain_btn_r = $CurtainBtnR
 @onready var curtain_btn_l = $CurtainBtnL
+@onready var bulb_btn = $lampTogggle
 @onready var close_bay_window = $BayWindow2
 # drag version
 @onready var water_can_trig = $WateringCanSprite
@@ -20,8 +21,8 @@ var hover_confirm_cursor = load("res://assets/spark.png")
 var is_in_selection_mode = false
 var prev_load_cnt = 0
 
-var lampOnQuery = JSON.stringify({"lamp_sta": 1})
-var lampOffQuery = JSON.stringify({"lamp_sta": 0})
+var lampOnQuery = JSON.stringify({"lamp_sta": 0})
+var lampOffQuery = JSON.stringify({"lamp_sta": 1})
 var lampHeaders = ["Content-Type: application/json"]
 const LIGHT_REQ = "https://esp32photo-1dc90-default-rtdb.firebaseio.com/photo_request.json"
 
@@ -41,21 +42,23 @@ const PHOGET_URL = "https://esp32photo-1dc90-default-rtdb.firebaseio.com/camera.
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	Input.set_custom_mouse_cursor(normal_cursor)
-	curtain_btn_l.toggled.connect(_on_curtain_button_toggled.bind(curtain_btn_r))
-	curtain_btn_r.toggled.connect(_on_curtain_button_toggled.bind(curtain_btn_l))
+	curtain_btn_l.toggled.connect(_on_curtain_button_toggled.bind([curtain_btn_r,bulb_btn]))
+	curtain_btn_r.toggled.connect(_on_curtain_button_toggled.bind([curtain_btn_l,bulb_btn]))
+	bulb_btn.toggled.connect(_on_curtain_button_toggled.bind([curtain_btn_l,curtain_btn_r]))
 	
 	water_can_trig.water_can_in_area.connect(_on_water_can_in_area)
 	cam_trig.take_pic_in_area.connect(_on_take_pic_in_area)
 
-func _on_curtain_button_toggled(is_on: bool, target_button: Button):
-	target_button.set_pressed_no_signal(is_on)
+func _on_curtain_button_toggled(is_on: bool, target_buttons: Array):
+	for each_btn in target_buttons:
+		each_btn.set_pressed_no_signal(is_on)
 	if is_on:
 		http_lamp.request(LIGHT_REQ, lampHeaders, HTTPClient.METHOD_PATCH, lampOnQuery)
-		close_bay_window.visible = true
+		close_bay_window.visible = false
 		print("The light is now ON")
 	else:
 		http_lamp.request(LIGHT_REQ, lampHeaders, HTTPClient.METHOD_PATCH, lampOffQuery)
-		close_bay_window.visible = false
+		close_bay_window.visible = true
 		print("light is OFF")
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -70,10 +73,10 @@ func _on_page_jump_pressed() -> void:
 func _on_lamp_togggle_toggled(toggled_on: bool) -> void:
 	if toggled_on:
 		http_lamp.request(LIGHT_REQ, lampHeaders, HTTPClient.METHOD_PATCH, lampOnQuery)
-		print("The light is now ON")
+		#print("The light is now ON")
 	else:
 		http_lamp.request(LIGHT_REQ, lampHeaders, HTTPClient.METHOD_PATCH, lampOffQuery)
-		print("light is OFF")
+		#print("light is OFF")
 
 
 func _finish_action():
@@ -104,7 +107,7 @@ func _on_snaphoto_pressed() -> void:
 	await http_prephoto.request_completed
 	var photo_ready = false
 	while not photo_ready:
-		await get_tree().create_timer(0.5).timeout
+		await get_tree().create_timer(3).timeout
 		http_syncheck.request(SYNC_URL)
 		var resSync = await http_syncheck.request_completed
 		var new_time = int(resSync[3].get_string_from_utf8())

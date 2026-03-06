@@ -1,4 +1,7 @@
 extends Control
+#@onready var log_btn_signal_receiver = $LogBtns
+#var log_btn_signal = false
+
 var point_spacing = 60.0 # Pixels between points
 var data_points = [] # Your data
 var bright_data_points = []
@@ -39,6 +42,7 @@ func new_bright_points_update(value):
 
 # data = Global.plotdata_logs[i]
 func _on_data_received(data):  # dictionary value, array of int
+	print("LOG signal received in CHART")
 	data_points = data["moist_points"]
 	bright_data_points = data["bright_points"]
 	secstr = data["ini_sec"]
@@ -51,9 +55,13 @@ func _on_data_received(data):  # dictionary value, array of int
 	#for bpoint in data["bright_points"]:
 		#new_bright_points_update(bpoint)	
 
+#func _on_update_notice_received():
+	#log_btn_signal = true
 
 func _ready() -> void:
+	# this stupid but signal from log_btn_container, reload plotdata_logs appended vals, and redraw
 	Global.data_submitted.connect(_on_data_received)
+	#log_btn_signal_receiver.live_plot_update.connect(_on_update_notice_received)
 	
 	update_chart_dimensions()
 	# Wait for Godot to update the UI layout engine
@@ -75,13 +83,19 @@ func _draw():
 	var max_val = data_points.max() if data_points.max() > 0 else 800.0
 	
 	var points = []
-	var measure_gap = 4
+	var measure_gap = 10
 	var secint = int(secstr)
 	if max_val == 0: max_val = 1 # Avoid division by zero
 	
 	for i in range(data_points.size()):
+		if data_points[i] >= 2500:
+			data_points[i] = 2050
+		if data_points[i] <= 400:
+			data_points[i] = 450
 		var x = i * point_spacing + 16
-		var y = chart_height - ((data_points[i] - 500) / 1700.0 * chart_height) 
+		var y = chart_height - ((data_points[i] - 400) / 2100.0 * chart_height) 
+		#print("remap is: " + str((data_points[i] - 400)))
+		#print("data_point percentage: " + str((data_points[i] - 400) / 2100.0))
 		points.append(Vector2(x, y))
 	
 		var p_top = Vector2(x, 0)
@@ -90,22 +104,26 @@ func _draw():
 		draw_string(pixel_font, p_bottom + Vector2(-15, 10), "Sec " + str(secint), HORIZONTAL_ALIGNMENT_CENTER, -1, 16)
 		secint += measure_gap
 		
-	draw_polyline(points, Color.CYAN, 0.5, true)
+	draw_polyline(points, Color.WHITE, 0.5, true)
 	for p in points:
-		draw_circle(p, 3.0, Color.WHITE)
+		draw_circle(p, 3.0, Color.DARK_CYAN)
 		
 		
 	if bright_data_points.size() >= 2:
 		var b_points = []
 		for i in range(bright_data_points.size()):
+			if bright_data_points[i] >= 1900:
+				bright_data_points[i] = 1350
+			if bright_data_points[i] <= 500:
+				bright_data_points[i] = 550
 			var x = i * point_spacing + 16
-			var y = chart_height - ((bright_data_points[i] - 500) / 1700.0 * chart_height)
+			var y = chart_height - ((bright_data_points[i] - 500) / 1400.0 * chart_height)
 			b_points.append(Vector2(x, y))
 		
 		# Draw the line in Yellow
 		draw_polyline(b_points, Color.YELLOW, 0.5, true)
 		for p in b_points:
-			draw_circle(p, 3.0, Color.YELLOW_GREEN)
+			draw_circle(p, 3.0, Color.GREEN_YELLOW)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://b3lrkfbfsa143"]
+
+[ext_resource type="Texture2D" uid="uid://dncd4uljgferg" path="res://assets/plant-cartoon.jpg" id="1_sj03k"]
+
+[node name="adjwoia" type="Node2D"]
+
+[node name="PointLight2D" type="PointLight2D" parent="."]
+
+[node name="PlantCartoon" type="Sprite2D" parent="."]
+rotation = 0.7853982
+texture = ExtResource("1_sj03k")

@@ -1,6 +1,7 @@
 extends Node2D
 @onready var home_button = $MarginContainer/HBoxContainer/ButtonContainer/HomeButton
-@onready var photo_textrec = $MarginContainer/HBoxContainer/TextureRect
+@onready var photo_textrec = $MarginContainer/HBoxContainer/Control/TextureRect
+@onready var photo_control = $MarginContainer/HBoxContainer/Control
 @onready var log_container = $MarginContainer/HBoxContainer/ScrollContainer/LogContainer
 @onready var date_display_label = $MarginContainer/HBoxContainer/PicInfoContainer/Date
 @onready var weather_display_label = $MarginContainer/HBoxContainer/PicInfoContainer/Weather
@@ -23,6 +24,7 @@ func conserve_old_imgs():
 		btn.custom_minimum_size = Vector2(16, 10)
 		btn.pressed.connect(self._on_dynamic_button_pressed.bind(item["image_path"]))
 		log_container.add_child(btn)
+		log_container.move_child(btn, 0)
 
 func load_all_pictures():
 	var cnt = 0
@@ -35,6 +37,7 @@ func load_all_pictures():
 			btn.custom_minimum_size = Vector2(16, 10)
 		
 			log_container.add_child(btn)
+			log_container.move_child(btn, 0)
 			btn.global_position = Vector2(10 + 10*log_col_cnt, 10 + 16*log_row_cnt)
 			log_row_cnt += 1
 			btn.pressed.connect(self._on_dynamic_button_pressed.bind(entry, Global.date_entries[cnt]))
@@ -81,6 +84,8 @@ func _on_dynamic_button_pressed(img_path):
 		print("Error code: ", error)
 		return
 	photo_textrec.texture = ImageTexture.create_from_image(image)
+	photo_textrec.rotation = deg_to_rad(45)
+	photo_textrec.position = Vector2(113,0)
 
 #func _on_dynamic_button_pressed(image_data, date_data):
 	#display_photo(image_data)

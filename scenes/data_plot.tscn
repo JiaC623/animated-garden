@@ -21,7 +21,7 @@ theme_override_constants/margin_bottom = 10
 layout_mode = 2
 
 [node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/HBoxContainer"]
-custom_minimum_size = Vector2(60, 0)
+custom_minimum_size = Vector2(70, 0)
 layout_mode = 2
 
 [node name="LogBtns" type="VBoxContainer" parent="MarginContainer/HBoxContainer/ScrollContainer"]
@@ -45,10 +45,10 @@ layout_mode = 2
 [node name="YAxisArea" type="VBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(30, 0)
 layout_mode = 2
+script = ExtResource("2_psgoq")
 
 [node name="StaticVLines" type="Control" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer/YAxisArea"]
 layout_mode = 2
-script = ExtResource("2_psgoq")
 
 [node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(320, 0)
@@ -86,7 +86,7 @@ text = "Moisture"
 [node name="BrightRect" type="ColorRect" parent="MarginContainer/HBoxContainer/VBoxContainer/Legends"]
 custom_minimum_size = Vector2(20, 0)
 layout_mode = 2
-color = Color(0.6039216, 0.8039216, 0.19607843, 1)
+color = Color(1, 1, 0, 1)
 
 [node name="BrightLeg" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/Legends"]
 layout_mode = 2

@@ -19,6 +19,8 @@ var sorted_raw_stamps: Array = []
 # emitter in log_btn, listener in line_chart
 signal data_submitted(data)
 
+var latest_quantity = 0
+
 func start_new_log():
 	#var date_time = Time.get_datetime_string_from_system(false,true)
 	repeat_timer.start()
@@ -194,10 +196,15 @@ func create_log_with_list():
 			#bright_plot_entries = []
 			#obj = {}
 
-	print("the following is from Global")
-	print(plotdata_logs)
+	#print("the following is from Global")
+	#print(plotdata_logs)
 	save_entries(plotdata_logs)
 
+func live_checking() -> bool:
+	if latest_quantity < plotdata_logs[-1]["moist_points"].size():
+		latest_quantity = plotdata_logs[-1]["moist_points"].size()
+		return true
+	return false
 
 
 func sort_timestamp():
@@ -220,8 +227,8 @@ func sort_timestamp():
 		#if item != ref_item:
 			#sorted_timestamp_arr.append(item)
 			#ref_item = item
-	print("sorted timestamp array is")
-	print(sorted_timestamp_arr)	
+	#print("sorted timestamp array is")
+	#print(sorted_timestamp_arr)	
 
 #func sort_raw_stamps():
 	#for item in raw_stamps_arr:
@@ -266,6 +273,7 @@ func _on_timer_timeout():
 
 func _ready() -> void:
 	conserve_old_entries()
+	latest_quantity = plotdata_logs[-1]["moist_points"].size()
 	
 	http_request = HTTPRequest.new()
 	add_child(http_request)
