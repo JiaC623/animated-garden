@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://b13xmoowa143k"]
+[gd_scene load_steps=26 format=3 uid="uid://b13xmoowa143k"]
 
 [ext_resource type="Texture2D" uid="uid://cr2mcgfvdk5lq" path="res://assets/prlxBackground1.png" id="1_o5qli"]
 [ext_resource type="Script" uid="uid://bbfs5dbt858kq" path="res://scripts/main.gd" id="1_tbgi4"]
@@ -19,6 +19,11 @@
 [ext_resource type="Script" uid="uid://c7gnf8bcs7uu" path="res://scripts/watering_can_sprite.gd" id="17_dp3eg"]
 [ext_resource type="Script" uid="uid://bm11jt6lbq44v" path="res://scripts/pot_plant_area.gd" id="18_dp3eg"]
 [ext_resource type="Script" uid="uid://c1h5sovtfj0q1" path="res://scripts/camera_sprite.gd" id="19_0ld40"]
+[ext_resource type="Texture2D" uid="uid://qsm8h2rynbcb" path="res://assets/noticeboard.png" id="20_gqmmt"]
+[ext_resource type="Texture2D" uid="uid://boyn8ga5lib04" path="res://assets/flashlight.png" id="20_jscy8"]
+[ext_resource type="Texture2D" uid="uid://bi4r7np1alw44" path="res://assets/sparkle.png" id="20_pm3ni"]
+[ext_resource type="Texture2D" uid="uid://cc6tapc768yg4" path="res://assets/manual.png" id="21_y6deb"]
+[ext_resource type="Texture2D" uid="uid://jp3qj5tisj6l" path="res://assets/waterdrop32.png" id="21_yc10j"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_muem4"]
 size = Vector2(74, 106)
@@ -99,23 +104,6 @@ offset_top = 202.0
 offset_right = 474.0
 offset_bottom = 252.0
 texture_normal = ExtResource("10_jkv2x")
-stretch_mode = 0
-
-[node name="albumjump2" type="Button" parent="."]
-offset_left = 425.0
-offset_top = 177.0
-offset_right = 472.0
-offset_bottom = 198.0
-theme_override_fonts/font = ExtResource("6_tipki")
-theme_override_font_sizes/font_size = 16
-text = "album"
-
-[node name="albumjump" type="TextureButton" parent="."]
-offset_left = 423.0
-offset_top = 143.0
-offset_right = 473.0
-offset_bottom = 193.0
-texture_normal = ExtResource("11_jbj1t")
 stretch_mode = 0
 
 [node name="lampTogggle" type="TextureButton" parent="."]
@@ -233,6 +221,108 @@ script = ExtResource("18_dp3eg")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="PotPlantArea"]
 shape = SubResource("RectangleShape2D_muem4")
 
+[node name="Noticeboard" type="Sprite2D" parent="."]
+position = Vector2(53, 56)
+scale = Vector2(3.46875, 3.15625)
+texture = ExtResource("20_gqmmt")
+
+[node name="TrackButton" type="CheckButton" parent="."]
+offset_left = 4.0
+offset_top = 100.0
+offset_right = 99.0
+offset_bottom = 124.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0.20415118, 0.63447815, 0.6576867, 1)
+theme_override_fonts/font = ExtResource("6_tipki")
+text = "keep track"
+
+[node name="TrackRequest" type="HTTPRequest" parent="TrackButton"]
+
+[node name="Label" type="Label" parent="."]
+offset_left = 22.0
+offset_top = 68.0
+offset_right = 48.0
+offset_bottom = 81.0
+theme_override_colors/font_color = Color(0.04755766, 0.047557645, 0.047557645, 1)
+theme_override_fonts/font = ExtResource("6_tipki")
+text = "moist"
+
+[node name="input" type="Label" parent="."]
+offset_left = 19.0
+offset_top = 47.0
+offset_right = 57.0
+offset_bottom = 60.0
+theme_override_colors/font_color = Color(0.04755766, 0.047557645, 0.047557645, 1)
+theme_override_fonts/font = ExtResource("6_tipki")
+
+[node name="Label2" type="Label" parent="."]
+offset_left = 53.0
+offset_top = 43.0
+offset_right = 131.0
+offset_bottom = 56.0
+theme_override_colors/font_color = Color(0.04755766, 0.047557645, 0.047557645, 1)
+theme_override_fonts/font = ExtResource("6_tipki")
+text = "bright"
+
+[node name="input2" type="Label" parent="."]
+offset_left = 57.0
+offset_top = 62.0
+offset_right = 103.00003
+offset_bottom = 75.0
+theme_override_colors/font_color = Color(0.04755766, 0.047557645, 0.047557645, 1)
+theme_override_fonts/font = ExtResource("6_tipki")
+
+[node name="albumjump2" type="Button" parent="."]
+offset_left = 425.0
+offset_top = 177.0
+offset_right = 472.0
+offset_bottom = 198.0
+theme_override_fonts/font = ExtResource("6_tipki")
+theme_override_font_sizes/font_size = 16
+text = "album"
+
+[node name="albumjump" type="TextureButton" parent="."]
+offset_left = 423.0
+offset_top = 143.0
+offset_right = 473.0
+offset_bottom = 193.0
+texture_normal = ExtResource("11_jbj1t")
+stretch_mode = 0
+
+[node name="Sparkle" type="Sprite2D" parent="albumjump"]
+position = Vector2(38, 34)
+scale = Vector2(1e-05, 1e-05)
+texture = ExtResource("20_pm3ni")
+
+[node name="Sparkle2" type="Sprite2D" parent="albumjump"]
+position = Vector2(3, 26)
+scale = Vector2(1e-05, 1e-05)
+texture = ExtResource("20_pm3ni")
+
+[node name="Sparkle3" type="Sprite2D" parent="albumjump"]
+position = Vector2(45, 12)
+scale = Vector2(1e-05, 1e-05)
+texture = ExtResource("20_pm3ni")
+
+[node name="manualJump" type="Button" parent="."]
+offset_left = 425.0
+offset_top = 120.0
+offset_right = 472.0
+offset_bottom = 141.00005
+theme_override_fonts/font = ExtResource("6_tipki")
+theme_override_font_sizes/font_size = 16
+text = "manual"
+
+[node name="manualButton" type="TextureButton" parent="."]
+offset_left = 424.0
+offset_top = 80.0
+offset_right = 474.0
+offset_bottom = 130.0
+texture_normal = ExtResource("21_y6deb")
+stretch_mode = 0
+
 [node name="CameraSprite" type="Sprite2D" parent="."]
 position = Vector2(37, 244)
 scale = Vector2(1.795, 1.7)
@@ -251,8 +341,19 @@ offset_bottom = -16.0
 grow_horizontal = 2
 grow_vertical = 2
 
+[node name="Flashlight" type="Sprite2D" parent="CameraSprite"]
+visible = false
+position = Vector2(8, -9)
+scale = Vector2(0.5571031, 0.58823526)
+texture = ExtResource("20_jscy8")
+
+[node name="Waterdrop" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(551, 195)
+scale = Vector2(0.5, 0.566)
+texture = ExtResource("21_yc10j")
+
 [connection signal="pressed" from="pageJump" to="." method="_on_page_jump_pressed"]
-[connection signal="pressed" from="albumjump" to="." method="_on_albumjump_pressed"]
 [connection signal="toggled" from="lampTogggle" to="." method="_on_lamp_togggle_toggled"]
 [connection signal="mouse_entered" from="snaphoto" to="." method="_on_snaphoto_mouse_entered"]
 [connection signal="mouse_exited" from="snaphoto" to="." method="_on_snaphoto_mouse_exited"]
@@ -266,5 +367,8 @@ grow_vertical = 2
 [connection signal="button_up" from="WateringCanSprite/Button" to="WateringCanSprite" method="_on_button_button_up"]
 [connection signal="mouse_entered" from="PotPlantArea" to="." method="_on_pot_plant_area_mouse_entered"]
 [connection signal="mouse_exited" from="PotPlantArea" to="." method="_on_pot_plant_area_mouse_exited"]
+[connection signal="toggled" from="TrackButton" to="." method="_on_track_button_toggled"]
+[connection signal="pressed" from="albumjump" to="." method="_on_albumjump_pressed"]
+[connection signal="pressed" from="manualButton" to="." method="_on_manual_button_pressed"]
 [connection signal="button_down" from="CameraSprite/Button" to="CameraSprite" method="_on_button_button_down"]
 [connection signal="button_up" from="CameraSprite/Button" to="CameraSprite" method="_on_button_button_up"]

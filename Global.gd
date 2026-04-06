@@ -16,6 +16,15 @@ var plotdata_logs:Array = []
 var raw_stamps_arr:Array = []
 var sorted_raw_stamps: Array = []
 
+var nonstop_timer_bool = false
+var timer_started = false
+var nonstop_timer: Timer
+var is_tracking_enabled: bool = false
+#@onready var track_data_button = %TrackButton
+
+var realt_moist = 0
+var realt_bright = 0
+
 # emitter in log_btn, listener in line_chart
 signal data_submitted(data)
 
@@ -51,7 +60,7 @@ func conserve_old_entries():
 func save_entries(data_array:Array):
 	var file = FileAccess.open("user://data_log.json", FileAccess.WRITE)
 	if file:
-		var json_string = JSON.stringify(data_array)
+		var json_string = JSON.stringify(data_array, "\t")
 		file.store_string(json_string)
 		file.close()
 		
@@ -96,7 +105,7 @@ func add_img_entry(pair_obj: Dictionary, count: int):
 	
 	var file = FileAccess.open("user://json_pairs.json", FileAccess.WRITE)
 	if file:
-		var json_string = JSON.stringify(img_log_entries)
+		var json_string = JSON.stringify(img_log_entries, "\t")
 		file.store_string(json_string)
 		file.close()
 
@@ -238,26 +247,29 @@ func sort_timestamp():
 
 # this is for sensor data storage
 func _on_request_completed(result, response_code, headers, body):
-	if response_code == 200: print("Global water request successful")
-	var json = JSON.parse_string(body.get_string_from_utf8())
-	#var group_num = json["group"]
-	#if group_num < check_num:
-		#print(check_num)
-		#print(group_num)
-	# --------------
-	var timestamp = Time.get_datetime_string_from_system().left(16).replace("T", " ")
-	var ini_sec = Time.get_datetime_string_from_system().substr(16, 5)
-	var moist = json["moist"]
-	var bright = json["bright"]
-	# append dictionary to array
-	create_json_obj_list(timestamp, ini_sec, moist, bright, plot_date_arr)
-		#check_num -= 1
-		#print("small gnum, run")
-		
-		#print("all js objs are")
-		#print(plot_date_arr)
-	sort_timestamp()
-	create_log_with_list()
+	if response_code == 200: 
+		print("Global water request successful")
+		var json = JSON.parse_string(body.get_string_from_utf8())
+		#var group_num = json["group"]
+		#if group_num < check_num:
+			#print(check_num)
+			#print(group_num)
+		# --------------
+		var timestamp = Time.get_datetime_string_from_system().left(16).replace("T", " ")
+		var ini_sec = Time.get_datetime_string_from_system().substr(16, 5)
+		var moist = json["moist"]
+		var bright = json["bright"]
+		realt_moist = moist
+		realt_bright = bright
+		# append dictionary to array
+		create_json_obj_list(timestamp, ini_sec, moist, bright, plot_date_arr)
+			#check_num -= 1
+			#print("small gnum, run")
+			
+			#print("all js objs are")
+			#print(plot_date_arr)
+		sort_timestamp()
+		create_log_with_list()
 
 func _on_timer_timeout():
 	total_time_passed += repeat_timer.wait_time
@@ -270,6 +282,23 @@ func _on_timer_timeout():
 		http_request.request(sensor_url)
 		print("water button sensor requested")
 
+
+#func _on_track_data_button_toggled(toggled_on: bool):
+	#if toggled_on:
+		#nonstop_timer.start()
+	#else:
+		#nonstop_timer.stop()
+#
+func _on_nonstop_timer_timeout():
+	#print("timeout func is triggered")
+	if nonstop_timer_bool:
+		http_request.request(sensor_url)
+		#print("data sent count + 1")
+	else:
+		nonstop_timer.stop()
+		timer_started = false
+		print("timer is stopped")
+	
 
 func _ready() -> void:
 	conserve_old_entries()
@@ -284,10 +313,16 @@ func _ready() -> void:
 	#repeat_timer.autostart = false
 	add_child(repeat_timer)
 	repeat_timer.timeout.connect(_on_timer_timeout)
+	
+	nonstop_timer = Timer.new()
+	nonstop_timer.wait_time = 3.0
+	add_child(nonstop_timer)
+	nonstop_timer.timeout.connect(_on_nonstop_timer_timeout)
+	#track_data_button.toggled.connect(Global._on_track_data_button_toggled)
 
 
-
-
-## Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta: float) -> void:
-	#pass
+func _process(delta: float) -> void:
+	if nonstop_timer_bool and !timer_started:
+		print("timer starts now")
+		nonstop_timer.start()
+		timer_started = true

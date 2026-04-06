@@ -5,7 +5,7 @@ extends Control
 var point_spacing = 60.0 # Pixels between points
 var data_points = [] # Your data
 var bright_data_points = []
-var chart_height = 160.0
+var chart_height = 154.0
 var pixel_font = preload("res://assets/at01.ttf")
 
 var secstr = ""
@@ -42,7 +42,7 @@ func new_bright_points_update(value):
 
 # data = Global.plotdata_logs[i]
 func _on_data_received(data):  # dictionary value, array of int
-	print("LOG signal received in CHART")
+	#print("LOG signal received in CHART")
 	data_points = data["moist_points"]
 	bright_data_points = data["bright_points"]
 	secstr = data["ini_sec"]
@@ -78,22 +78,24 @@ func update_chart_dimensions():
 	queue_redraw()
 	
 func _draw():
+	draw_set_transform(Vector2(0, 6), 0, Vector2(1, 1))
+	
 	if data_points.size() <= 0: 
 		return
 	var max_val = data_points.max() if data_points.max() > 0 else 800.0
 	
 	var points = []
-	var measure_gap = 10
+	var measure_gap = 3
 	var secint = int(secstr)
 	if max_val == 0: max_val = 1 # Avoid division by zero
 	
 	for i in range(data_points.size()):
-		if data_points[i] >= 2500:
-			data_points[i] = 2050
-		if data_points[i] <= 400:
-			data_points[i] = 450
+		if data_points[i] >= 1535:
+			data_points[i] = 1535
+		if data_points[i] <= 1154:
+			data_points[i] = 1154
 		var x = i * point_spacing + 16
-		var y = chart_height - ((data_points[i] - 400) / 2100.0 * chart_height) 
+		var y = (abs(data_points[i] - 1154) / 381.0 * chart_height) 
 		#print("remap is: " + str((data_points[i] - 400)))
 		#print("data_point percentage: " + str((data_points[i] - 400) / 2100.0))
 		points.append(Vector2(x, y))
@@ -112,12 +114,12 @@ func _draw():
 	if bright_data_points.size() >= 2:
 		var b_points = []
 		for i in range(bright_data_points.size()):
-			if bright_data_points[i] >= 1900:
-				bright_data_points[i] = 1350
-			if bright_data_points[i] <= 500:
-				bright_data_points[i] = 550
+			if bright_data_points[i] >= 4090:
+				bright_data_points[i] = 4090
+			if bright_data_points[i] <= 260:
+				bright_data_points[i] = 260
 			var x = i * point_spacing + 16
-			var y = chart_height - ((bright_data_points[i] - 500) / 1400.0 * chart_height)
+			var y = (abs(bright_data_points[i] - 260) / 3830.0 * chart_height)
 			b_points.append(Vector2(x, y))
 		
 		# Draw the line in Yellow
@@ -127,5 +129,5 @@ func _draw():
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
+#func _process(delta: float) -> void:
+	#pass

@@ -4,6 +4,7 @@ extends Node2D
 @onready var http_prephoto = $snaphoto/HTTPRequest
 @onready var http_syncheck = $snaphoto/HTTPRequest2
 @onready var http_disphoto = $snaphoto/HTTPDisplay
+@onready var http_track = $TrackButton/TrackRequest
 @onready var popup_window = $popup
 @onready var actual_picture = $popup/actualPhoto
 @onready var ok_button = $popup/okbutton
@@ -14,6 +15,11 @@ extends Node2D
 # drag version
 @onready var water_can_trig = $WateringCanSprite
 @onready var cam_trig = $CameraSprite
+@onready var check_btn = $TrackButton
+
+@onready var live_moist = $input
+@onready var live_bright = $input2
+var live_val = false
 
 var normal_cursor = load("res://assets/Leaf Cursor.png")
 var active_mode_cursor = load("res://assets/cam.png")
@@ -29,6 +35,11 @@ const LIGHT_REQ = "https://esp32photo-1dc90-default-rtdb.firebaseio.com/photo_re
 var sensingOnQuery = JSON.stringify({"water_can": 1})
 var sensingHeaders = ["Content-Type: application/json"]
 const SENSE_REQ = "https://esp32photo-1dc90-default-rtdb.firebaseio.com/photo_request.json"
+
+var trackOnQuerry = JSON.stringify({"general": 1})
+var trackOffQuerry = JSON.stringify({"general": 0})
+var trackHeaders = ["Content-Type: application/json"]
+const TRACK_REQ = "https://esp32photo-1dc90-default-rtdb.firebaseio.com/photo_request.json"
 
 var last_sync_time = 0
 var query = JSON.stringify({"action_req": 1})
@@ -46,8 +57,25 @@ func _ready() -> void:
 	curtain_btn_r.toggled.connect(_on_curtain_button_toggled.bind([curtain_btn_l,bulb_btn]))
 	bulb_btn.toggled.connect(_on_curtain_button_toggled.bind([curtain_btn_l,curtain_btn_r]))
 	
+	check_btn.button_pressed = Global.is_tracking_enabled
+	
 	water_can_trig.water_can_in_area.connect(_on_water_can_in_area)
 	cam_trig.take_pic_in_area.connect(_on_take_pic_in_area)
+
+
+func _on_track_button_toggled(toggled_on: bool) -> void:
+	if toggled_on:
+		Global.is_tracking_enabled = true
+		Global.nonstop_timer_bool = true
+		http_track.request(TRACK_REQ, trackHeaders, HTTPClient.METHOD_PATCH, trackOnQuerry)
+		print("track data ON")
+		live_val = true
+	else:
+		Global.is_tracking_enabled = false
+		Global.nonstop_timer_bool = false
+		http_track.request(TRACK_REQ, trackHeaders, HTTPClient.METHOD_PATCH, trackOffQuerry)
+		print("track data OFF")
+
 
 func _on_curtain_button_toggled(is_on: bool, target_buttons: Array):
 	for each_btn in target_buttons:
@@ -61,9 +89,14 @@ func _on_curtain_button_toggled(is_on: bool, target_buttons: Array):
 		close_bay_window.visible = true
 		print("light is OFF")
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta: float) -> void:
-	#pass
+func _process(delta: float) -> void:
+	if live_val:
+		var display_moist_val = str(int(snapped(abs(1535 - Global.realt_moist)/(1535-1154), 0.01) * 100)) + "%"
+		var display_bright_val = str(int(snapped(abs(4090 - Global.realt_bright)/(4090-260), 0.01) * 100)) + "%"
+		live_moist.text = display_moist_val
+		live_bright.text = display_bright_val
+		#live_moist.text = str(snapped(Global.realt_moist/1800, 0.01) * 100) + "%"
+		#live_bright.text = str(snapped(Global.realt_bright/1100, 0.01) * 100) + "%"
 
 
 func _on_page_jump_pressed() -> void:
@@ -207,7 +240,7 @@ func _on_albumjump_pressed() -> void:
 
 func _on_water_pressed() -> void:
 	http_sensing.request(SENSE_REQ, sensingHeaders, HTTPClient.METHOD_PATCH, sensingOnQuery)
-	Global.start_new_log()
+	#Global.start_new_log()
 
 func _on_water_http_request_completed(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray) -> void:
 	pass # sensing data is processed in Global.gd
@@ -218,3 +251,7 @@ func _on_water_http_request_completed(result: int, response_code: int, headers: 
 	
 #func _on_pot_plant_area_mouse_exited() -> void:
 	#print("leave")
+
+
+func _on_manual_button_pressed() -> void:
+	get_tree().change_scene_to_file("res://scenes/manual.tscn")
